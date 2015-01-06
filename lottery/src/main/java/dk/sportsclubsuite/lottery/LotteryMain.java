@@ -13,6 +13,9 @@ public class LotteryMain {
     public static void main(String[] args) {
         int lastNumber = 400;
         int winnersInDraw = 7;
+        int startYear = 2015;
+        int endYear = 2018;
+        final String clubName = "<<<REPLACE WITH A NAME>>>";
         String[] drawNames = {"januar", "februar", "marts", "april", "maj", "juni", "juli",
                 "august", "september", "oktober", "november", "december"};
 
@@ -23,13 +26,26 @@ public class LotteryMain {
 
         for (int i = 0; i < prevWinners.length; i++) {
             int prevWinner = prevWinners[i];
-            allWinnersEverList.add(new Integer(prevWinner));
+            Integer e = new Integer(prevWinner);
+            if (!allWinnersEverList.contains(e)) {
+                allWinnersEverList.add(e);
+            } else {
+                System.out.println("No. : " + e + " at index: " + i);
+                System.out.println("Winner found twice!");
+                // return;
+            }
         }
 
         LotteryStringGenerator stringGenerator = new LotteryStringGenerator() {
             @Override
-            public void applyText(String drawName, List<Integer> winnerNumbers, StringBuffer textBuffer) {
-                textBuffer.append("Hermed vindere af Gandrup Sportsklubs klublotto for " + drawName + " måned 2014.\n\n");
+            public void applyText(String drawName, List<Integer> winnerNumbers, int year, int month, StringBuffer textBuffer) {
+                textBuffer.append("Klublotto " + drawName + " " + year);
+                textBuffer.append("\n");
+                textBuffer.append(year + "-" + String.format("%02d", month) + "-01 01:00:00"); // 2013-12-01 01:00:25
+                textBuffer.append("\n");
+                textBuffer.append((year + 1) + "-01-01 01:00:00"); // 2013-12-01 01:00:25
+                textBuffer.append("\n");
+                textBuffer.append("Hermed vindere af " + clubName + " klublotto for " + drawName + " måned " + year + ".\n\n");
 
                 for (int i = 0; i < winnerNumbers.size(); i++) {
                     Integer winnerNumber = winnerNumbers.get(i);
@@ -44,21 +60,23 @@ public class LotteryMain {
         engine.removePrevWinners(prevWinners);
 
         List<LotteryDraw> draws = new ArrayList<LotteryDraw>(12);
-        for (int i = 0; i < drawNames.length; i++) {
-            String drawName = drawNames[i];
+        for (int currentYear = startYear; currentYear <= endYear; currentYear++) {
+            for (int i = 0; i < drawNames.length; i++) {
+                String drawName = drawNames[i];
 
-            int numbersLeft = winnersInDraw;
-            LotteryDraw draw = new LotteryDraw(drawName);
-            while (numbersLeft-- > 0) {
-                Integer number = engine.drawNumber();
-                if (doubleCheckList.contains(number)) {
-                    throw new RuntimeException("Numbers was already drawn!");
+                int numbersLeft = winnersInDraw;
+                LotteryDraw draw = new LotteryDraw(drawName, currentYear, i + 1);
+                while (numbersLeft-- > 0) {
+                    Integer number = engine.drawNumber();
+                    if (doubleCheckList.contains(number)) {
+                        throw new RuntimeException("Numbers was already drawn!");
+                    }
+                    draw.addWinnerNumber(number);
+                    allWinnersEverList.add(number);
+                    doubleCheckList.add(number);
                 }
-                draw.addWinnerNumber(number);
-                allWinnersEverList.add(number);
-                doubleCheckList.add(number);
+                draws.add(draw);
             }
-            draws.add(draw);
         }
 
         System.out.println("");

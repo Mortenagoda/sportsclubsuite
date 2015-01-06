@@ -11,10 +11,14 @@ public class LotteryDraw {
     private static final Logger LOGGER = Logger.getLogger(LotteryDraw.class.getName());
 
     private final String drawName;
+    private final int year;
+    private final int month;
     private List<Integer> winnerNumbers = new ArrayList<Integer>();
 
-    public LotteryDraw(String drawName) {
+    public LotteryDraw(String drawName, int year, int month) {
         this.drawName = drawName;
+        this.year = year;
+        this.month = month;
     }
 
 
@@ -36,7 +40,7 @@ public class LotteryDraw {
     public String getString(LotteryStringGenerator engine) {
         StringBuffer stringBuffer = new StringBuffer();
 
-        engine.applyText(drawName, winnerNumbers, stringBuffer);
+        engine.applyText(drawName, winnerNumbers, year, month, stringBuffer);
 
         return stringBuffer.toString();
     }

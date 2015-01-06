@@ -9,6 +9,6 @@ import java.util.logging.Logger;
 public abstract class LotteryStringGenerator {
     private static final Logger LOGGER = Logger.getLogger(LotteryStringGenerator.class.getName());
 
-    public abstract void applyText(String drawName, List<Integer> winnerNumbers, StringBuffer textBuffer);
+    public abstract void applyText(String drawName, List<Integer> winnerNumbers, int year, int month, StringBuffer textBuffer);
 
 }
